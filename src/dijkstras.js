@@ -1,46 +1,69 @@
 
 const $points = {}
 
-function Dijkstra(grid) {
-    console.log(grid)
-    const nodes = getNodes(grid)
-    console.log(nodes)
-    console.log($points)
-    const nodeNeighbors = getNeighbors(grid, $points.startNode)
-    while ($points.endNode !== Infinity) { 
+export default function Dijkstra(grid) {
+    //const nodes = getNodes(grid)
+    const unvisitedNodes = getNodes(grid)
+    const visitedNodes = []
+    //console.log('foobar', grid, unvisitedNodes, visitedNodes)
+    if(!!Object.keys($points).length) {
+        //var startNeighbors = getNeighbors(grid, grid[$points.startNode.row][$points.startNode.col])
+        //startNeighbors.forEach(node => sctNodes.push(node)) 
+        while(!!unvisitedNodes.length) { 
+            sortDistance(unvisitedNodes)
+            const currentNode = unvisitedNodes.shift()
+            updateNodes(grid, currentNode)
+        }
+    } 
+    //console.log('sctNodes', visitedNodes)
+}
 
+function sortDistance(unvisited) {
+    unvisited.sort((a, b) => a.nodeDistance - b.nodeDistance)
+}
+
+
+function updateNodes(grid, node) {
+    const neighbors = getNeighbors(grid, node)
+    neighbors.forEach(node => {
+        if(node.nodeDistance == Infinity) 
+            node.nodeDistance = node.previousNode.nodeDistance + 1
+    })
+}
+
+//function to get neighbors by node -- sets previousNode
+function getNeighbors(grid, node) { // update distance 
+    var nodeNeighbors = []
+    if(node) {
+        try {
+            if(grid[node.row][node.col+1] != undefined || null) {
+                //console.log(grid[node.row][node.col+1])
+                grid[node.row][node.col+1].previousNode = node
+                nodeNeighbors.push(grid[node.row][node.col+1])
+            }
+            if(grid[node.row][node.col-1] != undefined || null) {
+                //console.log(grid[node.row][node.col-1])
+                grid[node.row][node.col-1].previousNode = node
+                nodeNeighbors.push(grid[node.row][node.col-1])
+            }
+            if(grid[node.row+1][node.col] != undefined || null) {
+                //console.log(grid[node.row+1][node.col])
+                grid[node.row+1][node.col].previousNode = node
+                nodeNeighbors.push(grid[node.row+1][node.col])
+            }
+            if(grid[node.row-1][node.col] != undefined || null) {
+                //console.log(grid[node.row-1][node.col])
+                grid[node.row-1][node.col].previousNode = node
+                nodeNeighbors.push(grid[node.row-1][node.col])
+            }
+        }
+        finally {
+            return nodeNeighbors
+        }
     }
-    console.log(nodeNeighbors)
+    //return nodeNeighbors
 }
 
-//function to get neighbors by node
-function getNeighbors(grid, node) {
-    console.log(node)
-    var nodeNeighbors = {}
-    if(node !== undefined || null) {
-        console.log(node.col)
-        nodeNeighbors.nodeRight = grid[node.row][node.col+1]
-        nodeNeighbors.nodeLeft = grid[node.row][node.col-1]
-        nodeNeighbors.nodeUp = grid[node.row-1][node.col]
-        nodeNeighbors.nodeDown = grid[node.row+1][node.col]
-
-    }
-    return nodeNeighbors
-}
-
-  
- // a visited node will never be checked again
- // function to update nodes to visited
-function updateToVisited(node, grid) {
-
-}
-
-//function to sort shortest nodes 
-/*
-function sortShortest(grid) {
-
-}
-*/
 
 function getPoints(node) {
     if(node.startNode) {
@@ -52,24 +75,22 @@ function getPoints(node) {
     return $points
 }
 
+
 function getNodes(grid) {
-    const nodes = []
-    for (let row of grid) {
-        const currRow = []
-        for(var node of row) {
-            if(node.startNode) {
-                node.nodeDistance = 0
-                $points.startNode = node
-            }
-            else if(node.endNode) {
-                $points.endNode = node
-            }
-            currRow.push(node)
+    const nodes = [];
+    for (const row of grid) {
+      for (const node of row) {
+        if(node.startNode) {
+            $points.startNode = node
+            node.nodeDistance = 0
+            node.startNode = true
         }
-        nodes.push(currRow)
+        else if(node.endNode) {
+            $points.endNode = node
+        }
+        nodes.push(node)
+      }
     }
-    console.log($points)
-    return nodes 
+    return nodes;
 }
 
-export default Dijkstra

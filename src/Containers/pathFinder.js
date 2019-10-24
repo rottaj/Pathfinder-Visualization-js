@@ -1,5 +1,5 @@
 import React from 'react'
-import Node from './Component/node'
+import Node from '../Component/node'
 import Dijkstra from '../dijkstras'
 
 
@@ -24,6 +24,7 @@ export default class PathFinder extends React.Component {
                     col,
                     isVisited: false,
                     nodeDistance: Infinity,
+                    previousNode: {},
                     startNode: row == 8 && col == 5,
                     endNode: row == 8 && col == 30
                 }
@@ -33,6 +34,7 @@ export default class PathFinder extends React.Component {
         }
         this.setState({grid})
     }
+
     
     styles = {
         grid: {
@@ -40,14 +42,15 @@ export default class PathFinder extends React.Component {
         }
     }
 
-
     render() {
-        this.mountDijkstra()
         console.log(this.state)
         const {grid} = this.state
         console.log(grid)
         return (
             <div style={this.styles.grid}>
+                <div>
+                    <button onClick={() => this.mountDijkstra()}>Visualive Dijkstra</button>
+                </div>
                 {grid.map((row, rowIdx) => {
                     return <div>
                         {row.map((node, nodeIdx) => <Node nodeInfo={node}/>)}

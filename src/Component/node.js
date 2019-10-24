@@ -34,7 +34,7 @@ export default class Node extends React.Component {
             width: '25px',
             outline: this.state.startNode ? '1px solid green' : (this.state.endNode ? '1px solid red' : '1px solid grey'),
             display: 'inline-block',
-            background: this.state.wall ? 'black' : 'white',
+            background: this.state.wall ? 'black' : (this.props.nodeInfo.nodeDistance != Infinity ? 'blue' : 'white'),
         }
     }
     
@@ -67,7 +67,8 @@ export default class Node extends React.Component {
         //console.log('props', this.props)
         //console.log('state', this.state)
         return ( 
-            <div style={this.getStyle()} onMouseDown={() => this.makeWall()}>
+            <div style={this.getStyle()} onClick={() => this.makeWall()}>
+                {console.log(this.props.nodeInfo)}
             </div>
         )
     }
